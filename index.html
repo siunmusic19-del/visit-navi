@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>방문처 길 안내</title>
+
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 480px;
+      margin: 40px auto;
+      padding: 24px;
+      text-align: center;
+      line-height: 1.6;
+    }
+    h1 { font-size: 24px; }
+    #place { font-size: 20px; font-weight: bold; }
+    button {
+      width: 100%;
+      padding: 18px;
+      margin-top: 24px;
+      background: #FEE500;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .help { color: #666; font-size: 14px; }
+  </style>
+</head>
+
+<body>
+  <h1>방문처 길 안내</h1>
+  <p id="place">방문처 정보 확인 중</p>
+  <p id="message" class="help"></p>
+
+  <button id="navigate">카카오내비 길 안내 시작</button>
+
+  <script>
+    // 카카오디벨로퍼스에서 확인한 JavaScript 키를 입력하세요.
+    const KAKAO_JS_KEY = "여기에_JavaScript_키_입력";
+
+    const params = new URLSearchParams(location.search);
+    const name = params.get("name") || "";
+    const x = Number(params.get("x"));
+    const y = Number(params.get("y"));
+
+    document.getElementById("place").textContent =
+      name || "방문처가 지정되지 않았습니다.";
+
+    document.getElementById("message").textContent =
+      name && x && y
+        ? "목적지를 확인한 뒤 아래 버튼을 누르세요."
+        : "방문처명과 좌표가 포함된 링크가 필요합니다.";
+
+    if (KAKAO_JS_KEY !== "여기에_JavaScript_키_입력") {
+      Kakao.init(KAKAO_JS_KEY);
+    }
+
+    document.getElementById("navigate").addEventListener("click", function () {
+      if (!name || !Number.isFinite(x) || !Number.isFinite(y) || x === 0 || y === 0) {
+        alert("방문처명, 경도, 위도 정보가 있는 링크로 접속해 주세요.");
+        return;
+      }
+
+      if (KAKAO_JS_KEY === "여기에_JavaScript_키_입력") {
+        alert("먼저 카카오 JavaScript 키를 입력해 주세요.");
+        return;
+      }
+
+      Kakao.Navi.start({
+        name: name,
+        x: x,
+        y: y,
+        coordType: "wgs84"
+      });
+    });
+  </script>
+</body>
+</html>
